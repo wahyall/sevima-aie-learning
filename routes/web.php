@@ -25,7 +25,7 @@ Route::middleware(['auth', 'guru'])->group(function () {
     });
 
     Route::get('/kelas/{kode}/materi/{materi}/tugas', function ($kode, $materi) {
-        return Inertia::render('guru/materi/tugas/Index', [
+        return Inertia::render('kelas/materi/tugas/Index', [
             'kode' => $kode,
             'materi' => $materi
         ]);

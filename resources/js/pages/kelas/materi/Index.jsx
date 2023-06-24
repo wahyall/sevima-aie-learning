@@ -108,7 +108,12 @@ export default function Index() {
   return (
     <section className="my-10">
       {openForm && (
-        <Form table={table} selected={selected} close={handleCloseForm} />
+        <Form
+          table={table}
+          selected={selected}
+          close={handleCloseForm}
+          kode={kode}
+        />
       )}
       <Card>
         {!openForm && (

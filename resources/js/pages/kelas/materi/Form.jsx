@@ -14,7 +14,7 @@ import {
 } from "@material-tailwind/react";
 import { FileUpload } from "@/components";
 
-export default memo(function Form({ table, close, selected }) {
+export default memo(function Form({ table, close, selected, kode }) {
   const [file, setFile] = useState([]);
   const { register, control, watch, setValue } = useForm({
     values: selected,
@@ -22,7 +22,7 @@ export default memo(function Form({ table, close, selected }) {
 
   const url = useMemo(() => {
     if (selected?.id) return `/api/materi/${selected?.id}`;
-    else return "/api/materi";
+    else return `/api/kelas/${kode}/materi`;
   }, [selected]);
   const { mutate, isLoading } = useMutation(
     (data) => axios.post(url, data).then((res) => res.data),

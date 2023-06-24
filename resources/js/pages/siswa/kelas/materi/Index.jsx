@@ -68,19 +68,23 @@ export default function Index() {
         className="whitespace-pre-line"
       ></article>
 
-      <hr className="my-8" />
-      <form onSubmit={handleKumpulkanTugas}>
-        <h6 className="text-sm mb-2">Pengumpulan Tugas</h6>
-        <FileUpload
-          files={file}
-          onupdatefiles={setFile}
-          allowMultiple={false}
-          labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
-        />
-        <Button type="submit" disabled={isLoading}>
-          Kumpulkan
-        </Button>
-      </form>
+      {data.tipe === "tugas" && (
+        <>
+          <hr className="my-8" />
+          <form onSubmit={handleKumpulkanTugas}>
+            <h6 className="text-sm mb-2">Pengumpulan Tugas</h6>
+            <FileUpload
+              files={file}
+              onupdatefiles={setFile}
+              allowMultiple={false}
+              labelIdle='Drag & Drop your files or <span class="filepond--label-action">Browse</span>'
+            />
+            <Button type="submit" disabled={isLoading}>
+              Kumpulkan
+            </Button>
+          </form>
+        </>
+      )}
     </section>
   );
 }

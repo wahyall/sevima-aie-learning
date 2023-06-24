@@ -25,19 +25,6 @@ import { Link } from "@inertiajs/react";
 import { useUser } from "@/services";
 import { ChatGPT } from "@/components";
 
-const profileMenuItems = [
-  {
-    label: "Profile",
-    icon: UserCircleIcon,
-    href: "/profile",
-  },
-  {
-    label: "Keluar",
-    icon: PowerIcon,
-    href: "/logout",
-  },
-];
-
 function ProfileMenu() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const closeMenu = () => setIsMenuOpen(false);
@@ -73,34 +60,25 @@ function ProfileMenu() {
         </Button>
       </MenuHandler>
       <MenuList className="p-1">
-        {profileMenuItems.map(({ label, icon, href }, key) => {
-          const isLastItem = key === profileMenuItems.length - 1;
-          return (
-            <Link href={href} key={label}>
-              <MenuItem
-                onClick={closeMenu}
-                className={`flex items-center gap-2 rounded ${
-                  isLastItem
-                    ? "hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
-                    : ""
-                }`}
-              >
-                {React.createElement(icon, {
-                  className: `h-4 w-4 ${isLastItem ? "text-red-500" : ""}`,
-                  strokeWidth: 2,
-                })}
-                <Typography
-                  as="span"
-                  variant="small"
-                  className="font-normal"
-                  color={isLastItem ? "red" : "inherit"}
-                >
-                  {label}
-                </Typography>
-              </MenuItem>
-            </Link>
-          );
-        })}
+        <a href="/logout">
+          <MenuItem
+            onClick={closeMenu}
+            className="flex items-center gap-2 rounded hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
+          >
+            {React.createElement(PowerIcon, {
+              className: "h-4 w-4 text-red-500",
+              strokeWidth: 2,
+            })}
+            <Typography
+              as="span"
+              variant="small"
+              className="font-normal"
+              color="red"
+            >
+              Logout
+            </Typography>
+          </MenuItem>
+        </a>
       </MenuList>
     </Menu>
   );

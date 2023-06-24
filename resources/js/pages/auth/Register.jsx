@@ -90,7 +90,7 @@ export default function Register() {
             <Typography color="gray" className="mt-4 text-center font-normal">
               Sudah memiliki akun?{" "}
               <Link
-                href="register"
+                href="login"
                 className="font-medium text-blue-500 transition-colors hover:text-blue-700"
               >
                 Masuk
