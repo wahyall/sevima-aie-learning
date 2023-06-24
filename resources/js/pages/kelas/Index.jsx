@@ -2,26 +2,26 @@ import { useMemo, useState, useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 
 import { PaginateTable } from "@/components";
-import MainLayout from "../../MainLayout";
+import MainLayout from "../MainLayout";
 import Form from "./Form";
 import { toast } from "react-toastify";
-import { Link, usePage } from "@inertiajs/react";
 
 import {
   Card,
   CardHeader,
   CardBody,
   Button,
+  ButtonGroup,
   Dialog,
   DialogHeader,
   DialogBody,
   DialogFooter,
 } from "@material-tailwind/react";
 import { createColumnHelper } from "@tanstack/react-table";
+import { Link } from "@inertiajs/react";
 const columnHelper = createColumnHelper();
 
 export default function Index() {
-  const { kode } = usePage().props;
   const [selected, setSelected] = useState(null);
   const [openForm, setOpenForm] = useState(false);
   const table = useRef(null);
@@ -31,8 +31,8 @@ export default function Index() {
     setSelected(null);
   }
 
-  const { mutate: hapusMateri, isLoading } = useMutation(
-    (kelas) => axios.delete(`/api/materi/${kelas}`).then((res) => res.data),
+  const { mutate: hapusKelas, isLoading } = useMutation(
+    (kelas) => axios.delete(`/api/kelas/${kelas}`).then((res) => res.data),
     {
       onSuccess: (data) => {
         toast.success(data.message);
@@ -52,20 +52,14 @@ export default function Index() {
       style: {
         width: "25px",
       },
-      cell: (cell) => {
-        cell.getValue();
-      },
+      cell: (cell) => cell.getValue(),
     }),
-    columnHelper.accessor("judul", {
+    columnHelper.accessor("kode", {
       header: "Kode",
       cell: (cell) => cell.getValue(),
     }),
-    columnHelper.accessor("kelas.nama", {
-      header: "Kelas",
-      cell: (cell) => cell.getValue(),
-    }),
-    columnHelper.accessor("tipe", {
-      header: "tipe",
+    columnHelper.accessor("nama", {
+      header: "Nama",
       cell: (cell) => cell.getValue(),
     }),
     columnHelper.accessor("id", {
@@ -75,13 +69,11 @@ export default function Index() {
       },
       cell: (cell) => (
         <div className="flex gap-2">
-          {cell.row.original.tipe === "tugas" && (
-            <Link href={`/kelas/${kode}/materi/${cell.getValue()}/tugas`}>
-              <Button variant="outlined" size="sm">
-                Tugas
-              </Button>
-            </Link>
-          )}
+          <Link href={`/kelas/${cell.row.original.kode}/materi`}>
+            <Button size="sm" variant="outlined">
+              Materi
+            </Button>
+          </Link>
           <Button
             size="sm"
             color="amber"
@@ -107,6 +99,11 @@ export default function Index() {
     }),
   ]);
 
+  function handleOpenForm() {
+    setOpenForm(true);
+    setSelected(null);
+  }
+
   return (
     <section className="my-10">
       {openForm && (
@@ -116,30 +113,23 @@ export default function Index() {
         {!openForm && (
           <CardHeader className="p-4 flex justify-between items-center">
             <h1 className="text-2xl font-semibold mb-0 text-black">
-              Dashboard Materi ({kode})
+              Dashboard Kelas
             </h1>
-            <div>
-              <Link href="/">
-                <Button variant="outlined" className="me-2">
-                  Kembali
-                </Button>
-              </Link>
-              <Button onClick={() => setOpenForm(true)}>Buat Materi</Button>
-            </div>
+            <Button onClick={handleOpenForm}>Buat Kelas</Button>
           </CardHeader>
         )}
         <CardBody>
           <PaginateTable
-            url={`/api/kelas/${kode}/materi/paginate`}
+            url="/api/kelas/paginate"
             columns={columns}
-            id="table-materi"
+            id="table-kelas"
             ref={table}
           />
         </CardBody>
       </Card>
 
       <Dialog open={dialogHapus}>
-        <DialogHeader>Apakah Anda yakin ingin menghapus Materi?</DialogHeader>
+        <DialogHeader>Apakah Anda yakin ingin menghapus Kelas?</DialogHeader>
         <DialogBody divider>
           Data yang dihapus tidak dapat dikembalikan.
         </DialogBody>
@@ -155,7 +145,7 @@ export default function Index() {
           <Button
             variant="gradient"
             color="green"
-            onClick={() => hapusMateri(selected.id)}
+            onClick={() => hapusKelas(selected.id)}
             disabled={isLoading}
           >
             <span>Ya, Hapus</span>

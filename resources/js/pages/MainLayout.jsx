@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Navbar,
   Collapse,
@@ -10,6 +10,7 @@ import {
   MenuItem,
   Button,
   Avatar,
+  Drawer,
 } from "@material-tailwind/react";
 import {
   Bars3Icon,
@@ -17,12 +18,12 @@ import {
   UserCircleIcon,
   PowerIcon,
   ChevronDownIcon,
+  ChatBubbleLeftRightIcon,
 } from "@heroicons/react/24/outline";
 
 import { Link } from "@inertiajs/react";
 import { useUser } from "@/services";
 import { ChatGPT } from "@/components";
-import { If } from "react-haiku";
 
 const profileMenuItems = [
   {
@@ -108,35 +109,20 @@ function ProfileMenu() {
 function NavList() {
   const { data: user } = useUser();
   return (
-    <ul className="my-2 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
-      {/* <If isTrue={user?.role === "guru"}>
-        <Typography
-          as="li"
-          variant="small"
-          color="blue-gray"
-          className="p-1 font-medium"
+    <ul className="py-4 lg:py-0 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6 gap-y-4">
+      <Typography
+        as="li"
+        variant="small"
+        color="blue-gray"
+        className="p-1 font-medium me-5"
+      >
+        <Link
+          href="/catatan"
+          className="flex items-center hover:text-blue-500 text-white transition-colors"
         >
-          <Link
-            href="/kelas"
-            className="flex items-center hover:text-blue-500 text-white transition-colors"
-          >
-            Kelas
-          </Link>
-        </Typography>
-        <Typography
-          as="li"
-          variant="small"
-          color="blue-gray"
-          className="p-1 font-medium"
-        >
-          <Link
-            href="/materi"
-            className="flex items-center hover:text-blue-500 text-white transition-colors"
-          >
-            Materi
-          </Link>
-        </Typography>
-      </If> */}
+          Catatan
+        </Link>
+      </Typography>
       <ProfileMenu />
     </ul>
   );
@@ -156,44 +142,72 @@ export default function MainLayout({ children, auth: { user } }) {
     };
   }, []);
 
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const handleCloseDrawer = () => setOpenDrawer(false);
+
   return (
-    <main className="pt-[3.5rem]">
-      <Navbar className="fixed top-0 z-10 h-max max-w-full rounded-none py-2 px-4 lg:px-8 lg:py-2 bg-[#020617] bg-opacity-100 shadow-none border-none">
-        <div className="flex items-center justify-between text-blue-gray-900">
-          <Typography
-            variant="h6"
-            className="mr-4 cursor-pointer py-1.5 text-white"
-          >
-            <Link href="/">AIE-Learning</Link>
-          </Typography>
-          <div className="hidden lg:block">
-            <NavList />
+    <>
+      <main className="pt-[3.5rem]">
+        <Navbar className="fixed top-0 z-10 h-max max-w-full rounded-none py-2 px-4 lg:px-8 lg:py-2 bg-[#020617] bg-opacity-100 shadow-none border-none">
+          <div className="flex items-center justify-between text-blue-gray-900">
+            <Typography
+              variant="h6"
+              className="mr-4 cursor-pointer py-1.5 text-white"
+            >
+              <Link href="/">AIE-Learning</Link>
+            </Typography>
+            <div className="hidden lg:block">
+              <NavList />
+            </div>
+            <IconButton
+              variant="text"
+              className="ml-auto h-6 w-6 text-white hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
+              ripple={false}
+              onClick={() => setOpenNav(!openNav)}
+            >
+              {openNav ? (
+                <XMarkIcon className="h-6 w-6" strokeWidth={2} />
+              ) : (
+                <Bars3Icon className="h-6 w-6" strokeWidth={2} />
+              )}
+            </IconButton>
           </div>
-          <IconButton
-            variant="text"
-            className="ml-auto h-6 w-6 text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
-            ripple={false}
-            onClick={() => setOpenNav(!openNav)}
-          >
-            {openNav ? (
-              <XMarkIcon className="h-6 w-6" strokeWidth={2} />
-            ) : (
-              <Bars3Icon className="h-6 w-6" strokeWidth={2} />
-            )}
-          </IconButton>
-        </div>
-        <Collapse open={openNav}>
-          <NavList />
-        </Collapse>
-      </Navbar>
-      <section className="grid grid-cols-[4fr_2fr]">
-        <div className="p-4 h-[calc(100vh_-_3rem)] overflow-y-auto">
-          {children}
-        </div>
+          <Collapse open={openNav}>
+            <NavList />
+          </Collapse>
+        </Navbar>
+        <section className="grid lg:grid-cols-[4fr_2fr]">
+          <div className="p-4 h-[calc(100vh_-_3rem)] overflow-y-auto">
+            {children}
+          </div>
+          <div className="p-4 hidden lg:block">
+            <ChatGPT />
+          </div>
+        </section>
+
+        <IconButton
+          variant="outlined"
+          className="bg-white fixed bottom-4 right-4 lg:hidden"
+          onClick={() => setOpenDrawer(true)}
+          ripple={false}
+        >
+          <ChatBubbleLeftRightIcon className="h-6 w-6" />
+        </IconButton>
+      </main>
+      <Drawer placement="right" open={openDrawer} onClose={handleCloseDrawer}>
+        <IconButton
+          variant="text"
+          color="blue-gray"
+          className="absolute right-0"
+          onClick={handleCloseDrawer}
+          ripple={false}
+        >
+          <XMarkIcon strokeWidth={2} className="h-5 w-5" />
+        </IconButton>
         <div className="p-4">
           <ChatGPT />
         </div>
-      </section>
-    </main>
+      </Drawer>
+    </>
   );
 }

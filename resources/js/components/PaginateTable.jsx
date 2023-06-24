@@ -76,82 +76,82 @@ const PaginateTable = memo(
     return (
       <Card id={id} className="w-full h-full" shadow={false}>
         <CardBody className="px-0">
-          <div className="flex justify-between mb-4">
-            <div className="flex gap-4 items-center">
-              <Select
-                value={per}
-                onChange={setPer}
-                id="limit"
-                label="Tampilkan"
-              >
-                <Option value="10">10</Option>
-                <Option value="25">25</Option>
-                <Option value="50">50</Option>
-                <Option value="100">100</Option>
-              </Select>
-            </div>
-            <div>
-              <Input
-                label="Cari"
-                value={search}
-                onInput={(ev) => setSearch(ev.target.value)}
-                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-              />
-            </div>
+          <div className="grid sm:grid-cols-2 gap-4 mb-4 flex-wrap">
+            <Select
+              value={per}
+              onChange={setPer}
+              id="limit"
+              label="Tampilkan"
+              className="flex-fill"
+            >
+              <Option value="10">10</Option>
+              <Option value="25">25</Option>
+              <Option value="50">50</Option>
+              <Option value="100">100</Option>
+            </Select>
+            <Input
+              label="Cari"
+              value={search}
+              className="flex-fill"
+              onInput={(ev) => setSearch(ev.target.value)}
+              icon={<MagnifyingGlassIcon className="h-5 w-5" />}
+            />
           </div>
-          <table className="w-full min-w-max table-auto text-left">
-            <thead className="bg-gray-200">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th
-                      className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
-                      key={header.id}
-                      style={{ ...header.column.columnDef.style }}
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              <If isTrue={!!data.data.length}>
-                {table.getRowModel().rows.map((row) => (
-                  <tr
-                    key={`row.${row.original.id}`}
-                    className="even:bg-blue-gray-50/50"
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <td
-                        className={`p-2 ${cell.column.columnDef.className}`}
-                        key={`cell.${cell.id}.${cell.row.original.id}`}
+          <div className="overflow-auto w-100">
+            <table className="w-full min-w-max table-auto text-left">
+              <thead className="bg-gray-200">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <th
+                        className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
+                        key={header.id}
+                        style={{ ...header.column.columnDef.style }}
                       >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </td>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </th>
                     ))}
                   </tr>
                 ))}
-              </If>
-              <If isTrue={!data.data.length}>
-                <tr>
-                  <td colSpan={columns.length} className="text-center py-4">
-                    Data tidak ditemukan
-                  </td>
-                </tr>
-              </If>
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                <If isTrue={!!data.data.length}>
+                  {table.getRowModel().rows.map((row) => (
+                    <tr
+                      key={`row.${row.original.id}`}
+                      className="even:bg-blue-gray-50/50"
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <td
+                          className={`p-2 ${cell.column.columnDef.className}`}
+                          key={`cell.${cell.id}.${cell.row.original.id}`}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </If>
+                <If isTrue={!data.data.length}>
+                  <tr>
+                    <td colSpan={columns.length} className="text-center py-4">
+                      Data tidak ditemukan
+                    </td>
+                  </tr>
+                </If>
+              </tbody>
+            </table>
+          </div>
         </CardBody>
-        <CardFooter className="flex justify-between border-t border-blue-gray-50 p-4">
+        <CardFooter className="flex flex-wrap gap-y-4 justify-between border-t border-blue-gray-50 p-4">
           <div className="text-gray-700 text-xs">
             Menampilkan {data.from} sampai {data.to} dari {data.total} hasil
           </div>

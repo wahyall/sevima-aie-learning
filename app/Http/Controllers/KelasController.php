@@ -8,10 +8,6 @@ use App\Models\Kelas;
 use Illuminate\Support\Facades\DB;
 
 class KelasController extends Controller {
-    public function index() {
-        Inertia::render("kelas/Index");
-    }
-
     public function paginate(Request $request) {
         $per = (($request->per) ? $request->per : 10);
         $page = (($request->page) ? $request->page - 1 : 0);
@@ -63,13 +59,11 @@ class KelasController extends Controller {
     public function update(Request $request, $id) {
         $request->validate([
             'nama' => 'required',
-            'kode' => 'required'
         ]);
 
         $kelas = Kelas::find($id);
         $kelas->update([
             'nama' => $request->nama,
-            'kode' => $request->kode
         ]);
 
         return response()->json([

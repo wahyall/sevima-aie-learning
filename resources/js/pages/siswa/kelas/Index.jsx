@@ -36,9 +36,7 @@ export default function Index() {
       style: {
         width: "25px",
       },
-      cell: (cell) => {
-        cell.getValue();
-      },
+      cell: (cell) => cell.getValue(),
     }),
     columnHelper.accessor("judul", {
       header: "Judul",

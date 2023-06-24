@@ -6,6 +6,7 @@ use App\Http\Controllers\MateriController;
 use App\Http\Controllers\SiswaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CatatanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,5 +55,14 @@ Route::middleware(['auth'])->group(function () {
         Route::post('kelas/{kode}/materi/{materi}/tugas', [SiswaController::class, 'submitTugas']);
         Route::get('kelas/{kode}/join', [SiswaController::class, 'join']);
         Route::get('kelas/{kode}/leave', [SiswaController::class, 'leave']);
+    });
+
+    Route::prefix('catatan')->group(function () {
+        Route::post('paginate', [CatatanController::class, 'paginate']);
+        Route::get('', [CatatanController::class, 'get']);
+        Route::post('', [CatatanController::class, 'store']);
+        Route::get('{id}', [CatatanController::class, 'show']);
+        Route::post('{id}', [CatatanController::class, 'update']);
+        Route::delete('{id}', [CatatanController::class, 'destroy']);
     });
 });

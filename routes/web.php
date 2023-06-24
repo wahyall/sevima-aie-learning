@@ -17,9 +17,9 @@ use Inertia\Inertia;
 */
 
 Route::middleware(['auth', 'guru'])->group(function () {
-    Route::inertia('/', 'guru/Index');
+    Route::inertia('/', 'kelas/Index');
     Route::get('/kelas/{kode}/materi', function ($kode) {
-        return Inertia::render('guru/materi/Index', [
+        return Inertia::render('kelas/materi/Index', [
             'kode' => $kode
         ]);
     });
@@ -46,5 +46,7 @@ Route::middleware(['auth', 'siswa'])->group(function () {
         ]);
     });
 });
+
+Route::inertia('/catatan', 'catatan/Index')->middleware(['auth']);
 
 require __DIR__ . '/auth.php';

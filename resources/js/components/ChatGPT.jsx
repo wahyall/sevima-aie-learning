@@ -1,5 +1,5 @@
 import { memo, useEffect, useState, useRef } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import {
   Input,
@@ -15,6 +15,7 @@ import { For } from "react-haiku";
 import { toast } from "react-toastify";
 
 const ChatGPT = memo(() => {
+  const queryClient = useQueryClient();
   const [message, setMessage] = useState("");
   const [chats, setChats] = useState([]);
   const { mutate, isLoading } = useMutation(
@@ -42,6 +43,25 @@ const ChatGPT = memo(() => {
     });
   }, [chats]);
 
+  const { mutate: simpanCatatan, isLoading: isSaving } = useMutation(
+    (data) => axios.post("/api/catatan", data).then((res) => res.data),
+    {
+      onSuccess: (data) => {
+        toast.success(data.message);
+      },
+      onError: (error) => {
+        toast.error(error.response.data.message);
+      },
+    }
+  );
+
+  function handleSimpanCatatan(chat, index) {
+    const question = chats[index - 1].message;
+    const answer = chat.message;
+    simpanCatatan({ nama: question, isi: answer });
+    queryClient.invalidateQueries(["/api/catatan/paginate"]);
+  }
+
   return (
     <section className="h-[calc(100vh_-_3rem)] overflow-y-auto grid grid-rows-[36px_auto_150px] border-s">
       <h6 className="border-b font-bold px-4">AIE Chat</h6>
@@ -51,7 +71,7 @@ const ChatGPT = memo(() => {
       >
         <For
           each={chats}
-          render={(chat) =>
+          render={(chat, index) =>
             chat.type === "human" ? (
               <div className="bg-blue-500 p-4 rounded-md text-white max-w-xs w-[fit-content] ms-auto mb-8">
                 {chat.message}
@@ -71,7 +91,9 @@ const ChatGPT = memo(() => {
                     </IconButton>
                   </MenuHandler>
                   <MenuList className="p-1">
-                    <MenuItem>Simpan</MenuItem>
+                    <MenuItem onClick={() => handleSimpanCatatan(chat, index)}>
+                      Simpan
+                    </MenuItem>
                   </MenuList>
                 </Menu>
               </div>
