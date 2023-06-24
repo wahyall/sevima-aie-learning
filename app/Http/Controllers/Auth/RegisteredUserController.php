@@ -41,6 +41,10 @@ class RegisteredUserController extends Controller {
             'role' => $request->role
         ]);
 
-        return Auth::login($user);
+        Auth::login($user);
+
+        return response()->json([
+            'user' => $user
+        ]);
     }
 }

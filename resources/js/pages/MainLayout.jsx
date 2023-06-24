@@ -10,12 +10,6 @@ import {
   MenuItem,
   Button,
   Avatar,
-  Card,
-  List,
-  ListItem,
-  ListItemPrefix,
-  ListItemSuffix,
-  Chip,
 } from "@material-tailwind/react";
 import {
   Bars3Icon,
@@ -23,14 +17,12 @@ import {
   UserCircleIcon,
   PowerIcon,
   ChevronDownIcon,
-  PresentationChartBarIcon,
-  ShoppingBagIcon,
-  Cog6ToothIcon,
-  InboxIcon,
 } from "@heroicons/react/24/outline";
 
 import { Link } from "@inertiajs/react";
 import { useUser } from "@/services";
+import { ChatGPT } from "@/components";
+import { If } from "react-haiku";
 
 const profileMenuItems = [
   {
@@ -65,8 +57,11 @@ function ProfileMenu() {
             className="border border-blue-500 p-0.5"
             src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"
           />
-          <Typography as="span" className="font-normal normal-case pe-2">
-            {user?.name}
+          <Typography
+            as="span"
+            className="font-normal normal-case px-1 text-white"
+          >
+            {user?.name || ""}
           </Typography>
           <ChevronDownIcon
             strokeWidth={2.5}
@@ -111,41 +106,39 @@ function ProfileMenu() {
 }
 
 function NavList() {
+  const { data: user } = useUser();
   return (
     <ul className="my-2 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
-      <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="p-1 font-medium"
-      >
-        <a
-          href="#"
-          className="flex items-center hover:text-blue-500 transition-colors"
+      {/* <If isTrue={user?.role === "guru"}>
+        <Typography
+          as="li"
+          variant="small"
+          color="blue-gray"
+          className="p-1 font-medium"
         >
-          Pages
-        </a>
-      </Typography>
+          <Link
+            href="/kelas"
+            className="flex items-center hover:text-blue-500 text-white transition-colors"
+          >
+            Kelas
+          </Link>
+        </Typography>
+        <Typography
+          as="li"
+          variant="small"
+          color="blue-gray"
+          className="p-1 font-medium"
+        >
+          <Link
+            href="/materi"
+            className="flex items-center hover:text-blue-500 text-white transition-colors"
+          >
+            Materi
+          </Link>
+        </Typography>
+      </If> */}
       <ProfileMenu />
     </ul>
-  );
-}
-
-function Sidebar() {
-  return (
-    <Card
-      className="h-screen w-full max-w-[20rem] p-4 shadow-xl border-e rounded-none overflow-auto bg-[#020617]"
-      shadow={false}
-    >
-      <List className="text-white">
-        <ListItem>
-          <ListItemPrefix>
-            <PresentationChartBarIcon className="h-5 w-5" />
-          </ListItemPrefix>
-          Dashboard
-        </ListItem>
-      </List>
-    </Card>
   );
 }
 
@@ -164,16 +157,14 @@ export default function MainLayout({ children, auth: { user } }) {
   }, []);
 
   return (
-    <main>
-      <Navbar className="sticky top z-10 h-max max-w-full rounded-none py-2 px-4 lg:px-8 lg:py-2">
+    <main className="pt-[3.5rem]">
+      <Navbar className="fixed top-0 z-10 h-max max-w-full rounded-none py-2 px-4 lg:px-8 lg:py-2 bg-[#020617] bg-opacity-100 shadow-none border-none">
         <div className="flex items-center justify-between text-blue-gray-900">
           <Typography
-            as="a"
-            href="#"
             variant="h6"
-            className="mr-4 cursor-pointer py-1.5"
+            className="mr-4 cursor-pointer py-1.5 text-white"
           >
-            AIE-Learning
+            <Link href="/">AIE-Learning</Link>
           </Typography>
           <div className="hidden lg:block">
             <NavList />
@@ -195,9 +186,13 @@ export default function MainLayout({ children, auth: { user } }) {
           <NavList />
         </Collapse>
       </Navbar>
-      <section className="grid grid-cols-[1fr_3fr]">
-        <Sidebar />
-        <div className="p-4">{children}</div>
+      <section className="grid grid-cols-[4fr_2fr]">
+        <div className="p-4 h-[calc(100vh_-_3rem)] overflow-y-auto">
+          {children}
+        </div>
+        <div className="p-4">
+          <ChatGPT />
+        </div>
       </section>
     </main>
   );

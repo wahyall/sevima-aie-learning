@@ -20,7 +20,7 @@ class KelasController extends Controller {
         $courses = Kelas::where(function ($q) use ($request) {
             $q->where('nama', 'LIKE', '%' . $request->search . '%');
             $q->orWhere('kode', 'LIKE', '%' . $request->search . '%');
-        })->paginate($per, ['*', DB::raw('@nomor  := @nomor  + 1 AS nomor')]);
+        })->where('user_id', auth()->user()->id)->paginate($per, ['*', DB::raw('@nomor  := @nomor  + 1 AS nomor')]);
 
         return response()->json($courses);
     }
@@ -28,13 +28,14 @@ class KelasController extends Controller {
     public function store(Request $request) {
         $request->validate([
             'nama' => 'required',
-            'kode' => 'required'
         ]);
+
+        $kode = strtoupper(substr($request->nama, 0, 3) . substr(md5(time()), 0, 6));
 
         $kelas = Kelas::create([
             'user_id' => auth()->user()->id,
             'nama' => $request->nama,
-            'kode' => $request->kode
+            'kode' => $kode
         ]);
 
         return response()->json([
@@ -43,8 +44,16 @@ class KelasController extends Controller {
         ]);
     }
 
-    public function show($id) {
-        $kelas = Kelas::with('siswas')->find($id);
+    public function get() {
+        $kelas = Kelas::where('user_id', auth()->user()->id)->get();
+
+        return response()->json([
+            'kelas' => $kelas
+        ]);
+    }
+
+    public function show($kode) {
+        $kelas = Kelas::with('siswas')->where('kode', $kode)->first();
 
         return response()->json([
             'kelas' => $kelas
@@ -75,35 +84,6 @@ class KelasController extends Controller {
 
         return response()->json([
             'message' => 'Kelas berhasil dihapus'
-        ]);
-    }
-
-    public function join(Request $request) {
-        $request->validate([
-            'kode' => 'required'
-        ]);
-
-        $kelas = Kelas::where('kode', $request->kode)->first();
-
-        if (!$kelas) {
-            return response()->json([
-                'message' => 'Kelas tidak ditemukan'
-            ], 404);
-        }
-
-        $kelas->siswas()->attach(auth()->user()->id);
-
-        return response()->json([
-            'message' => 'Kelas berhasil diikuti'
-        ]);
-    }
-
-    public function leave($id) {
-        $kelas = Kelas::find($id);
-        $kelas->siswas()->detach(auth()->user()->id);
-
-        return response()->json([
-            'message' => 'Kelas berhasil ditinggalkan'
         ]);
     }
 }

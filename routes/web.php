@@ -16,8 +16,35 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('index');
-})->middleware('auth');
+Route::middleware(['auth', 'guru'])->group(function () {
+    Route::inertia('/', 'guru/Index');
+    Route::get('/kelas/{kode}/materi', function ($kode) {
+        return Inertia::render('guru/materi/Index', [
+            'kode' => $kode
+        ]);
+    });
+
+    Route::get('/kelas/{kode}/materi/{materi}/tugas', function ($kode, $materi) {
+        return Inertia::render('guru/materi/tugas/Index', [
+            'kode' => $kode,
+            'materi' => $materi
+        ]);
+    });
+});
+
+Route::middleware(['auth', 'siswa'])->group(function () {
+    Route::inertia('/siswa', 'siswa/Index');
+    Route::get('/siswa/kelas/{kode}', function ($kode) {
+        return Inertia::render('siswa/kelas/Index', [
+            'kode' => $kode
+        ]);
+    });
+    Route::get('/siswa/kelas/{kode}/materi/{materi}', function ($kode, $materi) {
+        return Inertia::render('siswa/kelas/materi/Index', [
+            'kode' => $kode,
+            'materi' => $materi
+        ]);
+    });
+});
 
 require __DIR__ . '/auth.php';

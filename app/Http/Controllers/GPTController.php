@@ -13,7 +13,7 @@ class GPTController extends Controller {
 
         $message = $request->message;
         $api_key = env("GPT_KEY");
-        $response = Http::accept('application/json')->withToken("Bearer $api_key")->post("https://api.pawan.krd/v1/completions", [
+        $response = Http::accept('application/json')->withToken($api_key)->post("https://api.pawan.krd/v1/completions", [
             "model" => "gpt-3.5-turbo",
             "prompt" => "Human: $message\\nAI:",
             "temperature" => 0.7,
@@ -26,7 +26,8 @@ class GPTController extends Controller {
 
         // return to client
         return response()->json([
-            'message' => $response->json()['choices'][0]['text']
+            'message' => $response->json()['choices'][0]['text'],
+            'type' => "ai"
         ]);
     }
 }

@@ -14,10 +14,11 @@ import { toast } from "react-toastify";
 export default function Login() {
   const { register, handleSubmit } = useForm();
   const { mutate, isLoading } = useMutation(
-    (data) => axios.post("/login", data),
+    (data) => axios.post("/login", data).then((res) => res.data),
     {
-      onSuccess: () => {
-        router.visit("/");
+      onSuccess: (data) => {
+        if (data.user.role === "guru") router.visit("/");
+        else router.visit("/siswa");
       },
       onError: (error) => {
         toast.error(error.response.data.message);

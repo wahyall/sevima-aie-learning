@@ -11,13 +11,11 @@ return new class extends Migration {
      * @return void
      */
     public function up() {
-        Schema::create('materis', function (Blueprint $table) {
+        Schema::create('catatans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('kelas_id')->references('id')->on('kelas')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->string('judul');
-            $table->text('konten');
-            $table->string('file')->nullable();
-            $table->enum('tipe', ['materi', 'tugas'])->default('materi');
+            $table->foreignId('user_id')->constrained('users');
+            $table->string('nama');
+            $table->text('isi');
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ return new class extends Migration {
      * @return void
      */
     public function down() {
-        Schema::dropIfExists('materis');
+        Schema::dropIfExists('catatans');
     }
 };
